@@ -2,7 +2,6 @@ import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "../(authentication)/auth/[...nextauth]/options";
 import { getPrismaClient } from "@/lib/helpers/prisma";
-import { revalidatePath } from "next/cache";
 
 const prisma = getPrismaClient();
 
@@ -41,7 +40,6 @@ export async function DELETE(req: NextRequest) {
   });
 
   if (validTaskId?._count.tasks === 0) {
-    console.log("title 4222");
     return NextResponse.json(
       { error: "The user does not have any task with the specified id." },
       { status: 403 }
