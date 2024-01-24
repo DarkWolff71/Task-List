@@ -12,12 +12,24 @@ import {
   allTasks,
   revalidateData,
 } from "@/recoil-store/atoms/taskList";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/shadcn/ui/sheet";
+import MenuIcon from "@mui/icons-material/Menu";
+import { signOut, useSession } from "next-auth/react";
+import { Avatar, Button } from "@nextui-org/react";
 
 export default function Home() {
   let revalidateDataState = useRecoilValue(revalidateData);
   let [taskListState, setTaskListState] = useRecoilState(taskList);
   let [allTasksState, setAllTasksState] = useRecoilState(allTasks);
   let [tasksExistState, setTasksExistState] = useState(false);
+  const { data: session } = useSession();
 
   useEffect(() => {
     async function getTasks() {
@@ -35,6 +47,33 @@ export default function Home() {
 
   return (
     <>
+      <Sheet>
+        <div className="flex w-full">
+          <div className="flex-grow flex items-center justify-center">
+            <div className="text-3xl font-bold dark:text-white font-mono ml-8">
+              Task List
+            </div>
+          </div>
+          <div className="mr-2">
+            <SheetTrigger>
+              <MenuIcon />
+            </SheetTrigger>
+          </div>
+        </div>
+        <SheetContent className="dark:border-gray-800">
+          <SheetDescription>
+            <div className="flex mt-2 gap-3 items-center">
+              <div>
+                <Avatar src={session?.user?.image || ""} />
+              </div>
+              <div>{session?.user?.name}</div>
+            </div>
+            <div className="flex items-center justify-center mt-4">
+              <Button onClick={() => signOut()}>Signout</Button>
+            </div>
+          </SheetDescription>
+        </SheetContent>
+      </Sheet>
       <div className="flex-col items-center justify-center gap-2">
         <AddTask></AddTask>
         {!tasksExistState ? null : (

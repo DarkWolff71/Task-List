@@ -5,7 +5,7 @@ import React, { useEffect, useRef, useState } from "react";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import getTaskStatusString from "@/lib/helpers/taskStatusString";
-import { cn } from "@/lib/helpers/utils";
+import { cn } from "@/lib/utils";
 import {
   Modal,
   ModalContent,

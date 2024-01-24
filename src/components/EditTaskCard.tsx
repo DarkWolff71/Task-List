@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { TaskStatusDropdown } from "./TaskStatusDropdown";
-import { cn } from "@/lib/helpers/utils";
+import { cn } from "@/lib/utils";
 
 export default function EditTaskCard() {
   let titleInputRef = useRef<HTMLTextAreaElement | null>(null);

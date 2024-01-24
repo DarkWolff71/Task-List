@@ -3,7 +3,7 @@
 import React, { useRef, useState } from "react";
 import { FullWidthBg } from "./FullWidthBg";
 import { Button } from "@nextui-org/react";
-import { cn } from "@/lib/helpers/utils";
+import { cn } from "@/lib/utils";
 import axios from "axios";
 import { BASE_URL } from "@/config/URL";
 import { useRecoilValue, useSetRecoilState } from "recoil";
