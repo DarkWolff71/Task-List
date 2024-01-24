@@ -21,10 +21,9 @@ import {
 } from "@nextui-org/react";
 import { BASE_URL } from "@/config/URL";
 import axios from "axios";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import { allTasks, revalidateData } from "@/recoil-store/atoms/taskList";
-import { useRouter } from "next/navigation";
-import { revalidatePath } from "next/cache";
+import toast from "react-hot-toast";
 
 type Props = {
   id: string;
@@ -34,7 +33,7 @@ type Props = {
   createdOn: string;
 };
 
-export function TaskCardNew({ title, description, status, id }: Props) {
+export function TaskCard({ title, description, status, id }: Props) {
   const {
     isOpen: isModalOpen,
     onOpen: onModalOpen,
@@ -47,16 +46,12 @@ export function TaskCardNew({ title, description, status, id }: Props) {
   let descriptionInputRef = useRef<HTMLTextAreaElement | null>(null);
   let [isInvalidTitleState, setIsInvalidTitleState] = useState(false);
   let setRevalidatDataState = useSetRecoilState(revalidateData);
-  let [allTasksState, setAllTasksState] = useRecoilState(allTasks);
-  const router = useRouter();
+  let setAllTasksState = useSetRecoilState(allTasks);
 
   const [selectedStatusKeys, setSelectedStatusKeys] = React.useState<
     Set<string>
   >(new Set([status]));
 
-  // const selectedStatusValue = React.useMemo(() => {
-  //   return Array.from(selectedStatusKeys).join(", ");
-  // }, [selectedStatusKeys]);
   let [selectedStatusValue, setSelectedStatusValue] =
     useState<TaskStatus>(status);
 
@@ -85,47 +80,57 @@ export function TaskCardNew({ title, description, status, id }: Props) {
 
   async function handleDeleteTask(onClose: () => void) {
     setIsDeleting(true);
-    await axios.delete(`${BASE_URL}/api/delete-task`, {
-      params: {
-        taskId: id,
-      },
-    });
+    try {
+      await axios.delete(`${BASE_URL}/api/delete-task`, {
+        params: {
+          taskId: id,
+        },
+      });
+      toast.success("Task deleted successfully!");
+    } catch (error) {
+      toast.error("Failed to delete the task! Please try again.");
+    }
     setIsDeleting(false);
     onClose();
     setRevalidatDataState((state) => !state);
-    // router.refresh();
   }
 
   async function handleSave() {
     setIsSaving(true);
-    console.log(titleInputRef.current?.value);
     if (!titleInputRef.current?.value) {
       setIsInvalidTitleState(true);
       return;
     }
-    await axios.post(`${BASE_URL}/api/edit-task`, {
-      id: id,
-      title: titleInputRef.current?.value,
-      description: descriptionInputRef.current?.value,
-      status: selectedStatusValue,
-    });
+    try {
+      await axios.post(`${BASE_URL}/api/edit-task`, {
+        id: id,
+        title: titleInputRef.current?.value,
+        description: descriptionInputRef.current?.value,
+        status: selectedStatusValue,
+      });
+      setInEditModeState(false);
+      toast.success("Successfully updated the task!");
+    } catch (err) {
+      toast.error("Failed to edit the task! Please try again.");
+    }
     if (isInvalidTitleState) {
       setIsInvalidTitleState(false);
     }
     setIsSaving(false);
-    setAllTasksState((tasks) =>
-      tasks.map((task) => {
-        if (task.id === id) {
-          return {
-            ...task,
-            title: titleInputRef.current?.value || "",
-            description: descriptionInputRef.current?.value,
-            status: selectedStatusValue as TaskStatus,
-          };
-        }
-        return task;
-      })
-    );
+
+    // setAllTasksState((tasks) =>
+    //   tasks.map((task) => {
+    //     if (task.id === id) {
+    //       return {
+    //         ...task,
+    //         title: titleInputRef.current?.value || "",
+    //         description: descriptionInputRef.current?.value,
+    //         status: selectedStatusValue as TaskStatus,
+    //       };
+    //     }
+    //     return task;
+    //   })
+    // );
     setRevalidatDataState((state) => !state);
   }
 
@@ -178,23 +183,11 @@ export function TaskCardNew({ title, description, status, id }: Props) {
                             selectionMode="single"
                             selectedKeys={selectedStatusKeys}
                             onSelectionChange={(status) => {
-                              console.log(Array.from(status)[0]);
-
                               setSelectedStatusValue(
                                 Array.from(status)[0] as TaskStatus
                               );
-                              // setSelectedStatusKeys(new Set(x as string));
                             }}
                           >
-                            {/* <DropdownItem key={TaskStatus.TODO}>
-                            {getTaskStatusString(TaskStatus.TODO)}
-                          </DropdownItem>
-                          <DropdownItem key={TaskStatus.IN_PROGRESS}>
-                            {getTaskStatusString(TaskStatus.IN_PROGRESS)}
-                          </DropdownItem>
-                          <DropdownItem key={TaskStatus.DONE}>
-                            {getTaskStatusString(TaskStatus.DONE)}
-                          </DropdownItem> */}
                             {Object.values(TaskStatus).map((value, index) => (
                               <DropdownItem key={value}>
                                 {getTaskStatusString(value as TaskStatus)}
@@ -216,7 +209,9 @@ export function TaskCardNew({ title, description, status, id }: Props) {
                 </div>
                 <div className="flex flex-col items-center justify-center gap-2">
                   <Button onClick={handleCancelEdit}>Cancel</Button>
-                  <Button onClick={handleSave}>Save</Button>
+                  <Button isLoading={isSaving} onClick={handleSave}>
+                    Save
+                  </Button>
                 </div>
               </div>
             </>

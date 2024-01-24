@@ -2,28 +2,23 @@
 
 import React, { useRef, useState } from "react";
 import { FullWidthBg } from "./FullWidthBg";
-import { Datepicker } from "flowbite-react";
 import { Button } from "@nextui-org/react";
 import { cn } from "@/lib/helpers/utils";
 import axios from "axios";
 import { BASE_URL } from "@/config/URL";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { status } from "@/recoil-store/atoms/addTask";
 import { TaskStatusDropdown } from "./TaskStatusDropdown";
-import { useRouter } from "next/navigation";
-import { revalidateData, taskList } from "@/recoil-store/atoms/taskList";
-import { randomUUID } from "crypto";
+import { revalidateData } from "@/recoil-store/atoms/taskList";
+import toast from "react-hot-toast";
 
 export function AddTask() {
   let titleInputRef = useRef<HTMLTextAreaElement | null>(null);
   let descriptionInputRef = useRef<HTMLTextAreaElement | null>(null);
   let setRevalidatDataState = useSetRecoilState(revalidateData);
   let [isInvalidTitleState, setIsInvalidTitleState] = useState(false);
-  let [addTaskStatusValue, setAddTaskStatusValue] = useRecoilState(status);
-  let [taskListState, setTaskListState] = useRecoilState(taskList);
+  let addTaskStatusValue = useRecoilValue(status);
   let [isSaving, setIsSaving] = useState(false);
-  // let [invalidTitleState, ssetInvalidTitleState] = useState(false)
-  const router = useRouter();
 
   async function handleSave(
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -39,16 +34,16 @@ export function AddTask() {
     const descriptionValue = descriptionInputRef.current?.value;
 
     try {
-      console.log("line 40");
       await axios.post(`${BASE_URL}/api/add-task`, {
         title: titleValue,
         status: addTaskStatusValue,
         ...(descriptionValue && { description: descriptionValue }),
       });
-      console.log("line 47");
+      toast.success("Task added successfully!");
       setRevalidatDataState((state) => !state);
-      // router.refresh();
-    } catch (error) {}
+    } catch (error) {
+      toast.error("Failed to add task! Please retry again.");
+    }
     setIsSaving(false);
   }
 
@@ -113,15 +108,6 @@ export function AddTask() {
                 </label>
                 <TaskStatusDropdown></TaskStatusDropdown>
               </div>
-              {/* <div className="flex items-center space-x-2">
-              <label
-                htmlFor="task-title"
-                className="block mb-2 text-lg font-medium text-gray-900 dark:text-gray-200"
-              >
-                Date:
-              </label>
-              <Datepicker />
-            </div> */}
             </div>
             <div className="flex items-center justify-center">
               <Button

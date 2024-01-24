@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Dropdown,
   DropdownTrigger,
@@ -8,20 +8,15 @@ import {
 } from "@nextui-org/react";
 import { TaskStatus } from "@prisma/client";
 import getTaskStatusString from "@/lib/helpers/taskStatusString";
-import { useRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import { filterTasksByStatus, taskList } from "@/recoil-store/atoms/taskList";
 import { Task } from "@/types/response";
 
 type Props = { tasks: Task[] };
 
 export function FilterTaskByStatusDropdown({ tasks }: Props) {
-  console.log("line 19: t: ", tasks);
-
-  // let [addTaskStatusValue, setAddTaskStatusValue] = useRecoilState(status);
-  let [taskStatusFilterState, setTaskStatusFilterState] =
-    useRecoilState(filterTasksByStatus);
-  let [filteredTaskListState, setFilteredTaskListState] =
-    useRecoilState(taskList);
+  let setTaskStatusFilterState = useSetRecoilState(filterTasksByStatus);
+  let setFilteredTaskListState = useSetRecoilState(taskList);
 
   const [selectedKeys, setSelectedKeys] = React.useState<Set<string>>(
     new Set(["ALL-TASKS"])
@@ -39,8 +34,6 @@ export function FilterTaskByStatusDropdown({ tasks }: Props) {
     }
     return selectedStatus;
   }, [selectedKeys]);
-
-  console.log(selectedValue);
 
   return (
     <Dropdown>

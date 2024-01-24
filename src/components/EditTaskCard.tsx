@@ -1,14 +1,11 @@
 import React, { useRef, useState } from "react";
 import { TaskStatusDropdown } from "./TaskStatusDropdown";
-import { useRecoilState } from "recoil";
-import { status } from "@/recoil-store/atoms/addTask";
 import { cn } from "@/lib/helpers/utils";
 
 export default function EditTaskCard() {
   let titleInputRef = useRef<HTMLTextAreaElement | null>(null);
   let descriptionInputRef = useRef<HTMLTextAreaElement | null>(null);
   let [isInvalidTitleState, setIsInvalidTitleState] = useState(false);
-  let [addTaskStatusValue, setAddTaskStatusValue] = useRecoilState(status);
 
   return (
     <div>

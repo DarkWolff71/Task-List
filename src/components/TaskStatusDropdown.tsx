@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Dropdown,
   DropdownTrigger,
@@ -8,11 +8,11 @@ import {
 } from "@nextui-org/react";
 import { TaskStatus } from "@prisma/client";
 import getTaskStatusString from "@/lib/helpers/taskStatusString";
-import { useRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import { status } from "@/recoil-store/atoms/addTask";
 
 export function TaskStatusDropdown() {
-  let [addTaskStatusValue, setAddTaskStatusValue] = useRecoilState(status);
+  let setAddTaskStatusValue = useSetRecoilState(status);
   const [selectedKeys, setSelectedKeys] = React.useState<Set<string>>(
     new Set([TaskStatus.TODO])
   );
@@ -26,7 +26,7 @@ export function TaskStatusDropdown() {
   return (
     <Dropdown>
       <DropdownTrigger>
-        <Button variant="bordered" className="bg-gray-50 dark:bg-gray-800">
+        <Button variant="bordered" className="w-24 bg-gray-50 dark:bg-gray-800">
           {getTaskStatusString(selectedValue as TaskStatus)}
         </Button>
       </DropdownTrigger>
@@ -39,15 +39,6 @@ export function TaskStatusDropdown() {
           setSelectedKeys(new Set(x as string));
         }}
       >
-        {/* <DropdownItem key={TaskStatus.TODO}>
-          {getTaskStatusString(TaskStatus.TODO)}
-        </DropdownItem>
-        <DropdownItem key={TaskStatus.IN_PROGRESS}>
-          {getTaskStatusString(TaskStatus.IN_PROGRESS)}
-        </DropdownItem>
-        <DropdownItem key={TaskStatus.DONE}>
-          {getTaskStatusString(TaskStatus.DONE)}
-        </DropdownItem> */}
         {Object.values(TaskStatus).map((value, index) => (
           <DropdownItem key={value}>
             {getTaskStatusString(value as TaskStatus)}
