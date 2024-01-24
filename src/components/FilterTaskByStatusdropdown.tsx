@@ -33,7 +33,7 @@ export function FilterTaskByStatusDropdown({ tasks }: Props) {
       );
     }
     return selectedStatus;
-  }, [selectedKeys]);
+  }, [selectedKeys, tasks]);
 
   return (
     <Dropdown>
