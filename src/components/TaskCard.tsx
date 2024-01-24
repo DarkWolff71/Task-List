@@ -22,7 +22,7 @@ import {
 import { BASE_URL } from "@/config/URL";
 import axios from "axios";
 import { useSetRecoilState } from "recoil";
-import { allTasks, revalidateData } from "@/recoil-store/atoms/taskList";
+import { revalidateData } from "@/recoil-store/atoms/taskList";
 import toast from "react-hot-toast";
 
 type Props = {
@@ -46,7 +46,6 @@ export function TaskCard({ title, description, status, id }: Props) {
   let descriptionInputRef = useRef<HTMLTextAreaElement | null>(null);
   let [isInvalidTitleState, setIsInvalidTitleState] = useState(false);
   let setRevalidatDataState = useSetRecoilState(revalidateData);
-  let setAllTasksState = useSetRecoilState(allTasks);
 
   const [selectedStatusKeys, setSelectedStatusKeys] = React.useState<
     Set<string>
@@ -117,20 +116,6 @@ export function TaskCard({ title, description, status, id }: Props) {
       setIsInvalidTitleState(false);
     }
     setIsSaving(false);
-
-    // setAllTasksState((tasks) =>
-    //   tasks.map((task) => {
-    //     if (task.id === id) {
-    //       return {
-    //         ...task,
-    //         title: titleInputRef.current?.value || "",
-    //         description: descriptionInputRef.current?.value,
-    //         status: selectedStatusValue as TaskStatus,
-    //       };
-    //     }
-    //     return task;
-    //   })
-    // );
     setRevalidatDataState((state) => !state);
   }
 

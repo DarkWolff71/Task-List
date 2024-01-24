@@ -38,6 +38,8 @@ export default function Home() {
       } = await axios.get(`${BASE_URL}/api/get-tasks`);
       if (tasks.length > 0) {
         setTasksExistState(true);
+      } else {
+        setTasksExistState(false);
       }
       setTaskListState(tasks);
       setAllTasksState(tasks);
