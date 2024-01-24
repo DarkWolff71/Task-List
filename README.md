@@ -21,5 +21,6 @@ A place to store all your tasks.
     - `vim prisma/.env` // populate it referring prisma/.env.sample
 3. Install dependencies: `pnpm install`
 3. Set up the database and configure environmental variables.
-4. Run the application: `pnpm run dev`
+4. Generate the prisma client: `pnpm dlx prisma migrate dev --name init`
+5. Run the application: `pnpm run dev`
   
