@@ -20,7 +20,6 @@ export default function Home() {
   let [tasksExistState, setTasksExistState] = useState(false);
 
   useEffect(() => {
-    console.log("line 24");
     async function getTasks() {
       const {
         data: { tasks },
